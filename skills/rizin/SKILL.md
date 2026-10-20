@@ -58,6 +58,8 @@ promising a decompiler: `pdg?` answers with the command or an error.
   session lifecycle, cost, error handling, and five worked scripts.
 - Read [psx-mips.md](references/psx-mips.md) when the target is a PlayStation 1
   or MIPS binary, or when you must identify PsyQ library code.
+- Search [psx-spx.txt](references/psx-spx.txt) (the nocash PSX hardware
+  specification) for register, memory map, BIOS, GTE, and file format facts.
 
 ## Guardrails
 

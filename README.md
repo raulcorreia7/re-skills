@@ -36,4 +36,7 @@ mkdir -p .agents/skills && cp -r re-skills/skills/* .agents/skills/
 
 ## License
 
-MIT
+MIT, except `skills/rizin/references/psx-spx.txt`: the PSX hardware
+specification (psx-spx, "Nocash PSXSPX Playstation Specifications") is the work
+of its original author and is included unmodified as a reference. It is not
+covered by this license.

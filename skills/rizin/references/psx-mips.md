@@ -4,7 +4,8 @@ Verified with Rizin 0.9.1 (and 0.8.2 for the endianness flags) on `game.exe`, a
 synthetic PS-X EXE: 0x800-byte header with `t_addr` 0x80010000, then four
 instructions (`lui v0, 0x8002; addiu v0, v0, -0x10; jr ra; nop`). Replace the
 addresses with your binary's. `raw.bin` is the same four instructions without
-the header. Platform facts follow the community hardware reference psx-spx
+the header. Platform facts follow the community hardware reference psx-spx (full text in
+[psx-spx.txt](psx-spx.txt); search it by section title)
 (sections named inline). Set `e scr.color=false` when you copy examples into
 scripts; the outputs below omit colour.
 
