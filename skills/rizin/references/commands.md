@@ -1,5 +1,9 @@
 # rizin commands
 
+A field guide to the rizin commands you will use most, with real output and the
+mistakes that cost time. Skim the tables, and come back to the pitfalls when
+something prints nothing.
+
 Targets **Rizin 0.8 or newer**; every command in this file exists in both 0.8.x
 and 0.9.x. Verified against Rizin 0.9.1 and 0.8.2, on `/usr/bin/true` (x86-64 ELF) and a
 1.4 MB little-endian MIPS PS-X EXE (`game.exe` below). Prefer the newest build

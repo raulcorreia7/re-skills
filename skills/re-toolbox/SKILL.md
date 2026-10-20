@@ -7,20 +7,21 @@ description: Picks the right standard tool for a reverse-engineering question: r
 
 ## Job
 
-Answer one reverse-engineering question per run: bytes, name, diff, verdict,
-compiler behavior, or one instruction word. Name the tool that answers it and
-report the answer with what the evidence does and does not prove.
+Answer one reverse-engineering question at a time: bytes, a name, a diff, a
+verdict, compiler behavior, or a single instruction word. Say which tool
+answers it, then report the answer along with what the evidence does and does
+not prove.
 
 ## Steps
 
-1. State the question, the binary or object, and the address before running
-   anything. Equal addresses in different images (overlays, modules) are
-   unrelated.
+1. Start by stating the question, the binary or object, and the address.
+   The same address in two different images (overlays, modules) is unrelated
+   code.
 2. Pick the tool from the table below. Command forms are in
    [tools.md](references/tools.md).
-3. Use one raw rizin session for several related queries: analysis is the
-   expensive part. Rizin mechanics belong to the `rizin` skill.
-4. Report the answer with the exact command that produced it. Tool output is a
+3. Keep related queries in one rizin session, since analysis is the slow part.
+   The `rizin` skill covers the mechanics.
+4. Report the answer with the command that produced it. Treat tool output as a
    hypothesis until a byte-exact comparison of rebuilt output against the
    original says otherwise.
 

@@ -7,25 +7,25 @@ description: Uses rizin and rzpipe for binary reverse engineering of raw, reloca
 
 ## Job
 
-Answer binary questions with rizin, or with rzpipe when the work is a script,
-and leave a reproducible trail: exact command, address, trimmed output, rizin
-version.
+Help the user understand a binary. Use rizin for a question, or rzpipe when
+the work becomes a script. Leave a trail someone else can repeat: the exact
+command, the address, the trimmed output, and the rizin version.
 
 ## Steps
 
-1. Open with explicit arch, bits, endianness, and base, then confirm what
-   loaded with `ij`, `iS`, and `ie`. An unusual format analysed silently as the
-   wrong one wastes the whole session.
-2. Analyse the least that answers the question: `af` at one address, then `aa`,
-   then `aaa`. Record the level used, because every later xref, function, and
-   variable result depends on it.
-3. Improve the inputs before reading them back: `afn` renames functions,
-   `afvt` types locals, `f`/`CC` label data. The decompiler and every later
-   query follow those names and types.
-4. Query with the JSON variants (`aflj`, `axtj`, `pdj`) and parse them; use
-   `@ addr` to scope a command and, for many queries, one session or a script.
-5. Record evidence: the command, the address or function it ran at, the trimmed
-   output, and the conclusion it supports.
+1. Open the file with the architecture, bit width, endianness, and base spelled
+   out, then check what actually loaded with `ij`, `iS`, and `ie`. A binary read
+   as the wrong format still looks plausible, and it wastes the whole session.
+2. Analyse as little as the question needs: `af` at one address, then `aa`,
+   then `aaa`. Note which level you used, because every later xref, function,
+   and variable result depends on it.
+3. Teach rizin what you learn. `afn` renames functions, `afvt` types locals,
+   and `f`/`CC` label data. The decompiler and every later query then use
+   those names and types.
+4. Ask for JSON (`aflj`, `axtj`, `pdj`) and parse it. Scope a command with
+   `@ addr`. For many queries, use one session or a script.
+5. Write down the evidence: the command, where it ran, the trimmed output, and
+   the conclusion it supports.
 
 ## Flow
 

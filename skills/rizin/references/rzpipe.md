@@ -1,5 +1,9 @@
 # rzpipe
 
+Rizin from Python. One process stays open, you send it commands, and you get
+JSON back. This page covers setup, the traps (a bad flag hangs forever), and
+six scripts you can adapt.
+
 Python driver for a live rizin process. Verified with `rzpipe` 0.6.2 against
 Rizin 0.9.1 (upstream latest) and 0.8.2; pick the binary with
 `rizin_home`/`PATH` and prefer the newest build available. The spawn flags must

@@ -1,5 +1,8 @@
 # Tool command forms
 
+A quick card for each tool in the table: the shape of the command, and what to
+watch for.
+
 Command shapes for the tools named in SKILL.md. Flags change between releases:
 run `TOOL --help` before relying on one, and report the tool version with the
 answer.

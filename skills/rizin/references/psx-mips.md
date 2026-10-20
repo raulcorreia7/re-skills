@@ -1,5 +1,9 @@
 # PlayStation 1 / MIPS with rizin
 
+Everything specific to PS1 programs: opening a PS-X EXE, the header, the BIOS
+and hardware addresses you will see, why the GTE shows up as `invalid`, and how
+to recognise PsyQ library code.
+
 Verified with Rizin 0.9.1 (and 0.8.2 for the endianness flags) on `game.exe`, a
 synthetic PS-X EXE: 0x800-byte header with `t_addr` 0x80010000, then four
 instructions (`lui v0, 0x8002; addiu v0, v0, -0x10; jr ra; nop`). Replace the
