@@ -11,31 +11,32 @@ driver are in the `rizin` skill.
 
 ```text
 $ rizin -q -a mips -b 32 -c 'e scr.color=false' -c 'e cfg.bigendian=false' \
-    -c aa -c 'aflj' -c 'axtj @ 0xADDR' -c 'pd 20 @ 0xADDR' image.bin
+    -c aa -c 'aflj' -c 'axtj @ 0x80010000' -c 'pd 20 @ 0x80010000' image.bin
 ```
 
-Raw image without a header: add `-n -m 0xLOAD`. Check `ij`, `iSj`, and `ie`
+Raw image without a header: add `-n -m 0x80010000` (the address of the first byte at run time). Check `ij`, `iSj`, and `ie`
 first.
 
 ## objdump (second opinion, built objects)
 
 ```text
 $ objdump -d -r -z OBJECT.o                                    # code with relocations inline
-$ objdump -D -b binary -m mips:3000 -EL --adjust-vma=0xLOAD IMAGE.bin   # raw MIPS little-endian image
+$ objdump -D -b binary -m mips:3000 -EL --adjust-vma=0x80010000 raw.bin   # raw MIPS little-endian image
 ```
 
-Use the cross build of binutils for the target (for example a
-`mipsel-*-objdump`). Relocation lines show symbol and addend, which a plain
+Use a binutils build that supports the target (for example a
+`mipsel-*-objdump`); a host x86-only `objdump` rejects `-m mips:3000`. Relocation lines show symbol and addend, which a plain
 byte diff hides.
 
 ## xxd (raw bytes)
 
 ```text
-$ xxd -s $((0xVADDR - 0xLOAD + 0xHEADER)) -l 16 image.bin
+$ xxd -s $((0x80010000 - 0x80010000 + 0x800)) -l 16 game.exe     # vaddr - load + header size
+00000800: 0280 023c f0ff 4224 0800 e003 0000 0000  ...<..B$........
 ```
 
-`HEADER` is the number of file bytes before the loaded payload (0 for a raw
-image).
+The last term is the file bytes before the loaded payload: 0x800 for a PS-X
+EXE, 0 for a raw image.
 
 ## m2c (first C draft from MIPS assembly)
 

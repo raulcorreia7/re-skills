@@ -1,8 +1,12 @@
 # PlayStation 1 / MIPS with rizin
 
-Verified with Rizin 0.9.1 and 0.8.2 on a PS-X EXE (`game.exe` below). Platform
-facts follow the community hardware reference psx-spx (sections named inline).
-Addresses written `0xNAME` are placeholders for your binary.
+Verified with Rizin 0.9.1 (and 0.8.2 for the endianness flags) on `game.exe`, a
+synthetic PS-X EXE: 0x800-byte header with `t_addr` 0x80010000, then four
+instructions (`lui v0, 0x8002; addiu v0, v0, -0x10; jr ra; nop`). Replace the
+addresses with your binary's. `raw.bin` is the same four instructions without
+the header. Platform facts follow the community hardware reference psx-spx
+(sections named inline). Set `e scr.color=false` when you copy examples into
+scripts; the outputs below omit colour.
 
 ## Open a PS-X EXE
 
@@ -10,9 +14,10 @@ Addresses written `0xNAME` are placeholders for your binary.
 $ rizin -q -F psxexe -a mips -b 32 -E little -c ij game.exe | jq -c '{format:.core.format,arch:.bin.arch,bits:.bin.bits,endian:.bin.endian}'
 {"format":"psxexe","arch":"mips","bits":32,"endian":"LE"}
 $ rizin -q -a mips -b 32 -E little -c iSj game.exe | jq -c '[.[]|select(.name=="TEXT")|{paddr,size,vaddr}]'
-[{"paddr":2048,"size":...,"vaddr":...}]     # paddr 0x800, vaddr = t_addr
+[{"paddr":2048,"size":16,"vaddr":2147549184}]     # paddr 0x800, vaddr 0x80010000 = t_addr
 $ rizin -q -a mips -b 32 -E little -c ie game.exe
-0xENTRY 0xENTRY ... type program
+     vaddr      paddr     hvaddr      haddr type
+0x80010000 0x00000800 ---------- ---------- program
 ```
 
 The `psxexe` loader detects the `PS-X EXE` magic, so `-F` is only needed when
@@ -27,7 +32,9 @@ in-session works on both:
 ```text
 $ rizin -q -F psxexe -a mips -b 32 \
     -c 'e cfg.bigendian=false' -c 'e asm.bits=32' -c 'e asm.arch=mips' \
-    -c 'pd 2 @ 0xENTRY' game.exe
+    -c 'pd 2 @ 0x80010000' game.exe
+            0x80010000      lui   v0, 0x8002
+            0x80010004      addiu v0, v0, -0x10
 ```
 
 ## The 2 KiB header
@@ -53,6 +60,7 @@ import struct; d=open('game.exe','rb').read(0x800)
 print('pc=0x%08x' % struct.unpack_from('<I',d,0x10)[0], 'gp=0x%x' % struct.unpack_from('<I',d,0x14)[0],
       't_addr=0x%08x' % struct.unpack_from('<I',d,0x18)[0], 't_size=0x%x' % struct.unpack_from('<I',d,0x1c)[0],
       'sp_base=0x%08x' % struct.unpack_from('<I',d,0x30)[0])"
+pc=0x80010000 gp=0x0 t_addr=0x80010000 t_size=0x10 sp_base=0x801ffff0
 ```
 
 Rizin maps exactly this: one `TEXT` section with `paddr 0x800`, `vaddr t_addr`,
@@ -68,17 +76,18 @@ The same entry point under three wrong settings gives three plausible but wrong
 decodes, which is why the confirm step (`ij`, `iS`, `ie`) exists:
 
 ```text
-$ rizin -q -F psxexe -a mips -b 32 -E little -c 'pd 2 @ 0xENTRY' game.exe
-            0xENTRY      lui   v0, ...             # correct
-$ rizin -q -F psxexe -a mips -b 32 -E big -c 'pd 2 @ 0xENTRY' game.exe
-        ┌─< 0xENTRY      blez  t4, ...             # wrong endianness
-        │   0xENTRY      swr   s2, ...(a1)
-$ rizin -q -F psxexe -a x86 -b 64 -c 'pd 2 @ 0xENTRY' game.exe
-            0xENTRY      sbb   dword [rax-...], eax   # wrong arch
-$ rizin -q -n -a mips -b 32 -E little -c 'iSj' -c 'pd 1 @ 0xENTRY' game.exe
-ERROR: No binary object currently selected.
-WARNING: Failed to read chunk of size 0x101 at 0xENTRY from io.
-            0xENTRY      sdc3  31, -1(ra)             # no mapping (-n without -m)
+$ rizin -q -F psxexe -a mips -b 32 -E little -c 'pd 2 @ 0x80010000' game.exe
+            0x80010000      lui   v0, 0x8002           # correct
+            0x80010004      addiu v0, v0, -0x10
+$ rizin -q -F psxexe -a mips -b 32 -E big -c 'pd 2 @ 0x80010000' game.exe
+            0x80010000      invalid                    # wrong endianness
+            0x80010004      scd   ra, 0x4224(a3)
+$ rizin -q -F psxexe -a x86 -b 64 -c 'pd 2 @ 0x80010000' game.exe
+            0x80010000      add   al, byte [rax-0xfc3fe]   # wrong arch
+            0x80010006      and   al, 0x08
+$ rizin -q -n -a mips -b 32 -E little -c 'pd 1 @ 0x80010000' raw.bin
+WARNING: Failed to read chunk of size 0x101 at 0x80010000 from io.
+            0x80010000      sdc3  31, -1(ra)           # no mapping (-n without -m)
 ```
 
 Confirmed negatives on a PS-X EXE (do not read them as absence of code):
@@ -92,18 +101,21 @@ matched sleigh language and can disassemble through Sleigh with p-code:
 
 ```text
 $ rizin -q -c 'e cfg.bigendian=false; e asm.bits=32; e asm.arch=mips' \
-    -c 'pdgss' -c 'pdgsd 4 @ 0xFUNC' game.exe
+    -c 'pdgss' -c 'pdgsd 2 @ FUNC' game.exe
 MIPS:LE:32:default:
-0xFUNC: addiu sp, sp, -0x18
+FUNC: addiu sp, sp, -0x18
     sp = INT_ADD sp, 0xffffffe8
-0xFUNC+4: sw ra, 0x10(sp)
-    ...
+FUNC+4: sw ra, 0x10(sp)
+    (unique,0x200,4) = INT_ADD sp, 0x10
+    ra = STORE ram[(unique,0x200,4)]
 ```
+(`FUNC` stands for a function address in a binary whose build has rz-ghidra; the
+sample was captured with rz-ghidra 0.9.0 and is not reproducible on `game.exe`.)
 
-(Temporary `unique` IDs differ between rz-ghidra builds; read the data flow,
-not the numbers.)
+Temporary `unique` IDs differ between rz-ghidra builds; read the data flow,
+not the numbers.
 
-- Naming and typing feed the output, as on x86: `afn NAME @ 0xFUNC` renames the
+- Naming and typing feed the output, as on x86: `afn NAME @ FUNC` renames the
   function in the output; `afvt` on a local changes its declaration.
 - Expect `// WARNING: [rz-ghidra] Matching calling convention n32 of function
   <name> failed, args may be inaccurate.` on MIPS function boundaries; verify
@@ -121,12 +133,18 @@ When the 0x800 header is missing or must be bypassed, map the raw file at the
 address where its first byte lives at run time:
 
 ```text
-$ rizin -q -n -a mips -b 32 -E little -m 0xLOAD \
-    -c 'omlj' -c 'pd 2 @ 0xLOAD' raw.bin
+$ rizin -q -n -a mips -b 32 -E little -m 0x80010000 \
+    -c 'pd 2 @ 0x80010000' raw.bin
+            0x80010000      lui   v0, 0x8002
+            0x80010004      addiu v0, v0, -0x10
+$ rizin -q -n -a mips -b 32 -E little -m 0x8000f800 \
+    -c 'pd 2 @ 0x80010000' game.exe      # whole PS-X EXE file: t_addr - 0x800
+            0x80010000      lui   v0, 0x8002
+            0x80010004      addiu v0, v0, -0x10
 ```
 
 - `-B` under `-n` does not map: `WARNING: Failed to read chunk of size 0x101
-  at 0xADDR from io.` then garbage decode. Use `-n -m`.
+  at 0x80010000 from io.` then garbage decode. Use `-n -m`.
 - To map an untouched PS-X EXE file with `-n`, use `t_addr - 0x800`, so the
   first code byte lands on `t_addr`.
 - Overlay files are raw code loaded at a fixed runtime address; open them the
@@ -220,7 +238,7 @@ disassemble as `invalid`. Plain cop2 transfers (`mfc2`/`swc2`) decode but cannot
 be re-assembled:
 
 ```text
-0xADDR      invalid                  ; 0x4A180001 = RTPS
+0x80010000      invalid                  ; 0x4A180001 = RTPS
 ```
 
 Annotate GTE words with `CC`/`f` from a name table, and do not trust `aez`/ESIL

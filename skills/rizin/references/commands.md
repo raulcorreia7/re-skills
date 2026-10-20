@@ -47,14 +47,16 @@ virtual addresses unless a command says otherwise.
 | Entry points | `rizin -qc ie FILE` | `<entry vaddr> <entry vaddr> ... type program` |
 | Force a loader | `-F psxexe` | Bypasses detection: a raw-in-header image still parses |
 | Raw image | `-n` | No bin parsing: io only, no sections, no symbols |
-| Map a raw file | `-n -m 0xBASE` | Maps the whole file at that address (`oml` confirms) |
+| Map a raw file | `-n -m 0x80010000` | Maps the whole file at that address (`oml` confirms) |
 | Set base | `-B 0x80010000` | Base for PIE-style relocation; **not** a raw-image mapping |
 | Open another file | `o FILE`, then `olj` | Appends an fd; `omlj` lists per-fd maps |
 
 ```text
-$ rizin -q -n -a mips -b 32 -E little -m 0xBASE \
-    -c 'omlj' -c 'pd 2 @ 0xADDR' raw.bin
-[{"map":1,"fd":3,"delta":0,"from":...,"to":...,"perm":"r-x","name":""}]
+$ rizin -q -n -a mips -b 32 -E little -m 0x80010000 \
+    -c 'omlj' -c 'pd 2 @ 0x80010000' raw.bin
+[{"map":1,"fd":3,"delta":0,"from":2147549184,"to":2147549200,"perm":"r-x","name":""}]
+            0x80010000      lui   v0, 0x8002
+            0x80010004      addiu v0, v0, -0x10
 ```
 
 `omlj` shows the map; `pd` at an address inside it decodes instructions.
@@ -67,7 +69,7 @@ Pitfalls:
 - `S` is not a command in 0.9.1 (`ERROR: Command 'S' does not exist.`); use
   `iS` / `iSj` for sections and `iSS` for segments.
 - `-B` under `-n` fails: `WARNING: Failed to read chunk of size 0x101 at
-  0xADDR from io.` followed by garbage (`sdc3 31, -1(ra)`). Use `-n -m`.
+  0x80010000 from io.` followed by garbage (`sdc3 31, -1(ra)`). Use `-n -m`.
 - `-c 'td struct demo { int value; }'` fails: rizin splits `-c` strings on `;`.
   Escape it — `-c 'td struct demo { int value\; }'` then `-c 'ts demo'` prints
   `pf "d4 value"`.
