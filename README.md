@@ -1,40 +1,35 @@
 # re-skills
 
-Agent skills for reverse engineering.
+Two agent skills for reverse engineering.
 
-| Skill | Use |
+| Skill | What it does |
 | --- | --- |
-| [`rizin`](skills/rizin/SKILL.md) | Inspect binaries with rizin and rzpipe: commands, JSON output, version differences, PS1/MIPS notes |
-| [`re-toolbox`](skills/re-toolbox/SKILL.md) | Choose the right tool for a reverse-engineering question: bytes, diffs, match verdicts, compiler behavior, MIPS word decode |
-
-Each skill is a folder with a `SKILL.md` (frontmatter `name` and `description`)
-and optional `references/`.
+| [`rizin`](skills/rizin/SKILL.md) | Inspect binaries with rizin and rzpipe. Command reference, JSON output, version quirks, PS1/MIPS notes. |
+| [`re-toolbox`](skills/re-toolbox/SKILL.md) | Pick the right tool for a question: bytes, diffs, match verdicts, compiler behavior, MIPS word decode. |
 
 ## Install
 
-Copy or symlink the skill folders into the skills directory your agent reads:
-
 ```sh
 git clone https://github.com/raulcorreia7/re-skills.git
-# user-wide (Claude Code reads ~/.claude/skills; many agents read ~/.agents/skills)
-ln -s "$PWD"/re-skills/skills/rizin      ~/.claude/skills/rizin
-ln -s "$PWD"/re-skills/skills/re-toolbox ~/.claude/skills/re-toolbox
-# per project
-mkdir -p .agents/skills && cp -r re-skills/skills/* .agents/skills/
+cp -r re-skills/skills/* ~/.claude/skills/     # Claude Code, all projects
 ```
 
-- Claude Code: `~/.claude/skills/` or `<project>/.claude/skills/`.
-- Codex and other agents that follow the `.agents` convention:
-  `~/.agents/skills/` or `<project>/.agents/skills/`. The `rizin` skill ships
-  `agents/openai.yaml` for Codex metadata.
-- Any other agent: point it at the `SKILL.md` files.
+Other places to put the skill folders:
 
-## Requirements
+| Agent | Folder |
+| --- | --- |
+| Claude Code (one project) | `.claude/skills/` |
+| Codex and other `.agents` agents | `~/.agents/skills/` or `.agents/skills/` |
 
-`rizin` 0.8 or newer (and `rzpipe` for scripts). Other tools named in
-`re-toolbox` are optional.
+Use `ln -s` instead of `cp -r` to follow updates. Any other agent can read the
+`SKILL.md` files directly.
+
+## Needs
+
+`rizin` 0.8 or newer. `rzpipe` for scripts. The other tools in `re-toolbox` are
+optional.
 
 ## License
 
-MIT. `skills/rizin/references/psx-spx.txt` is third-party, bundled unmodified,
-and not covered by it; see [psx-spx.NOTICE.md](skills/rizin/references/psx-spx.NOTICE.md).
+MIT. The bundled `psx-spx.txt` is third-party and not covered; see
+[its notice](skills/rizin/references/psx-spx.NOTICE.md).
