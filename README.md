@@ -15,7 +15,7 @@ and optional `references/`.
 Copy or symlink the skill folders into the skills directory your agent reads:
 
 ```sh
-git clone <repo-url> re-skills
+git clone https://github.com/raulcorreia7/re-skills.git
 # user-wide (Claude Code reads ~/.claude/skills; many agents read ~/.agents/skills)
 ln -s "$PWD"/re-skills/skills/rizin      ~/.claude/skills/rizin
 ln -s "$PWD"/re-skills/skills/re-toolbox ~/.claude/skills/re-toolbox
