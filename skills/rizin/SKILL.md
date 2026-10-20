@@ -1,7 +1,6 @@
 ---
 name: rizin
 description: Uses rizin and rzpipe for binary reverse engineering of raw, relocated, or console binaries, covering disassembly, functions, xrefs, strings, data extraction, Python scripting, and PlayStation 1/MIPS specifics. Do not use for source-level or repository code work.
-license: MIT
 ---
 
 # Rizin

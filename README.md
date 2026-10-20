@@ -36,11 +36,5 @@ mkdir -p .agents/skills && cp -r re-skills/skills/* .agents/skills/
 
 ## License
 
-MIT for the skills.
-
-`skills/rizin/references/psx-spx.txt` is third-party and not covered by that
-license. It is the "Nocash PSXSPX Playstation Specifications" text, copied
-unmodified from <http://problemkaputt.de/psx-spx.txt>. The file carries no
-license statement; its own credits section names the sources it compiles
-(doomed/padua, Joshua Walker, IDT manuals, and others). Remove the file and
-use that URL instead if you need clear redistribution terms.
+MIT. `skills/rizin/references/psx-spx.txt` is third-party, bundled unmodified,
+and not covered by it; see [psx-spx.NOTICE.md](skills/rizin/references/psx-spx.NOTICE.md).
