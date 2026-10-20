@@ -11,15 +11,20 @@ Two agent skills for reverse engineering.
 
 ```sh
 git clone https://github.com/raulcorreia7/re-skills.git
-cp -r re-skills/skills/* ~/.claude/skills/     # Claude Code, all projects
 ```
 
-Other places to put the skill folders:
+Copy the skill folders to the place your agent reads. Global means every
+project. Per project means only that repository.
 
-| Agent | Folder |
-| --- | --- |
-| Claude Code (one project) | `.claude/skills/` |
-| Codex and other `.agents` agents | `~/.agents/skills/` or `.agents/skills/` |
+| Agent | Global | Per project |
+| --- | --- | --- |
+| Claude Code | `~/.claude/skills/` | `.claude/skills/` |
+| Codex and other `.agents` agents | `~/.agents/skills/` | `.agents/skills/` |
+
+```sh
+cp -r re-skills/skills/* ~/.claude/skills/          # global, Claude Code
+cp -r re-skills/skills/* .claude/skills/            # this project, Claude Code
+```
 
 Use `ln -s` instead of `cp -r` to follow updates. Any other agent can read the
 `SKILL.md` files directly.
