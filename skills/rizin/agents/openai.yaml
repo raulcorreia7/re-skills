@@ -1,0 +1,6 @@
+interface:
+  display_name: "Rizin"
+  short_description: "Reverse engineer binaries with rizin and rzpipe"
+  default_prompt: "Use $rizin to inspect this binary and report the evidence."
+policy:
+  allow_implicit_invocation: true
