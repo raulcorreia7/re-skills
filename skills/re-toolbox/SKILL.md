@@ -1,6 +1,7 @@
 ---
 name: re-toolbox
 description: Picks the right standard tool for a reverse-engineering question: rizin, objdump, xxd, m2c, objdiff or asm-differ, decomp-permuter, Ghidra headless, rabbitizer, splat/spimdisasm, ast-grep. Covers bytes lookup, diff reading, match verdicts with false-green checks, compiler-behavior attribution, and single-word MIPS decode. Use for any address, caller, string, symbol, constant, diff, or built object question in a binary or matching-decompilation project.
+license: MIT
 ---
 
 # RE toolbox
