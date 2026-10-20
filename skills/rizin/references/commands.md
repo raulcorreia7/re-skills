@@ -9,7 +9,7 @@ Outputs are trimmed from real runs.
 ## Version portability (rizin >= 0.8)
 
 A 66-case sample of the commands in this file ran on both builds: 45 outputs
-were byte-identical, and every difference was shape or formatting — no command
+were byte-identical, and every difference was shape or formatting, no command
 availability change. The deltas that can break a script:
 
 | Area | 0.9.x | 0.8.x | Rule |
@@ -22,7 +22,7 @@ availability change. The deltas that can break a script:
 | `/zj` hits | `detail` field | absent | Same |
 | `pf` | prints `[LE]` endian tag | no tag | Do not depend on the tag |
 | `pfj` | one row per field with `endian` | legacy split rows | Prefer `pxwj`/`pxj` for raw values |
-| `pdf` text | `setnz al`, `cmp edi, 0x02` | `setne al`, `cmp edi, 2` | Same 67-line box layout; mnemonics and immediates differ — parse `pdfj`/`pdj` fields instead of grepping text |
+| `pdf` text | `setnz al`, `cmp edi, 0x02` | `setne al`, `cmp edi, 2` | Same 67-line box layout; mnemonics and immediates differ, parse `pdfj`/`pdj` fields instead of grepping text |
 | Bundled types (`t`, `ts`, `tl`) | richer DB, different order | smaller DB | Define types with `td`/`to`; do not depend on shipped names |
 | `phl` | provider list differs | differs | Check with `phl~sha256` instead of assuming one implementation |
 | Bad config key | two error lines | one | Match on the key name, not the line count |
@@ -71,12 +71,12 @@ Pitfalls:
 - `-B` under `-n` fails: `WARNING: Failed to read chunk of size 0x101 at
   0x80010000 from io.` followed by garbage (`sdc3 31, -1(ra)`). Use `-n -m`.
 - `-c 'td struct demo { int value; }'` fails: rizin splits `-c` strings on `;`.
-  Escape it — `-c 'td struct demo { int value\; }'` then `-c 'ts demo'` prints
+  Escape it, `-c 'td struct demo { int value\; }'` then `-c 'ts demo'` prints
   `pf "d4 value"`.
 - Rizin 0.8.2: `-E` → `rizin: illegal option -- E`; use
   `-c 'e cfg.bigendian=false; e asm.bits=32; e asm.arch=mips'` (verified: the
   PS-X EXE then disassembles correctly).
-- `-q0` frames every reply with `\0` (xxd: `7b 22 63 6f 72 65 ...`) — that is
+- `-q0` frames every reply with `\0` (xxd: `7b 22 63 6f 72 65 ...`), that is
   the rzpipe protocol, not normal output.
 
 ## Analysis levels
@@ -102,7 +102,7 @@ Pitfalls:
   `ERROR: No function defined here` and does nothing. It also uses its second
   argument as **both** entry size and entry count (`librz/arch/jmptbl.c`):
   `afj 0xb800 4` on `/usr/bin/true` created 4 case flags, `afj 0xb800 11` only
-  1. On MIPS it is usually wrong — resolve jump tables by hand — and outside an
+  1. On MIPS it is usually wrong, resolve jump tables by hand, and outside an
   analysis task it logs `rz_analysis_task_item_new: assertion ... failed`.
 - `afbe` (add switch-case edge) is broken in 0.9.1 (frees the block list it then
   uses); prefer `afb+`, `axc`, and `CC` comments.
@@ -139,10 +139,10 @@ var int64_t var_10h @ stack - 0x10
 | Vars/args | `afvl @ main`, `afvlj` | `var int64_t var_10h @ stack - 0x10` etc. |
 | Set var type | `afvt var_10h int @ main` | Renames the local's type to `int`; `pdg` then declares `int var_10h;` |
 | Var xrefs | `afvx @ main`, `afvR VAR`, `afvW VAR` | reads: `argc 0x24a4` / `argv 0x24bb,0x24be` / `var_10h 0x2509,0x2524`; writes analogous |
-| Exit points | `afbr @ main` | `0x000024b6`, `0x0000254e` — every address that leaves the function |
+| Exit points | `afbr @ main` | `0x000024b6`, `0x0000254e`: every address that leaves the function |
 | Calling convention | `afc @ main` | `amd64` from the help table; `afc?` lists the names |
 | Signature | `afs @ main` | `int main(int argc, char **argv, char **envp);` |
-| Disassemble | `pd N`, `pdf`, `pdfj` | `pdf` adds xref/arg comments and block arrows. Watch out: `pdf` on a 200 KB function is slow — use `pd`+`@` |
+| Disassemble | `pd N`, `pdf`, `pdfj` | `pdf` adds xref/arg comments and block arrows. Watch out: `pdf` on a 200 KB function is slow, use `pd`+`@` |
 | Recursive | `pdr`, `pdrj` | Follows the call graph; JSON has `opcode`/`esil` per instruction |
 | Graph | `agf json @ main`, `agf ascii` | `agf json` → `{"nodes":[...]}`; filter with jq |
 
@@ -192,7 +192,7 @@ $ rizin -qc 'aa; axlj' /usr/bin/true | jq '[.[]|select(.type=="CALL")]|.[:2]'
 
 - `axt` = refs **to** the address (callers), `axf` = refs **from** it,
   `axl` = everything.
-- They are empty until an analysis command creates the refs — `axt` before `aa`
+- They are empty until an analysis command creates the refs, `axt` before `aa`
   is a silent negative, not evidence.
 - `afij @ F` also carries `callrefs`/`datarefs` with `{"from","to","type"}`.
 - Data vs call: `CALL` entries are call sites; `DATA` entries point at
@@ -219,7 +219,7 @@ $ rizin -qc iij /usr/bin/true | jq '.[0:1]'
   `CCfj` lists the current function's.
 - Symbols: `is[j]` lists the symbol table, `ie[j]` entries, `ii[j]` imports,
   `iE[j]` exports. A stripped binary can answer `isj` with `[]` while `ii`
-  still shows dynamic imports — check both.
+  still shows dynamic imports, check both.
 - `afn` renames functions; it is also the fastest way to pin a name from an
   external symbol list (see the rzpipe symbol-annotation script).
 
@@ -245,7 +245,7 @@ pf "d4 value"
   listing (**`tlj` does not exist**), `tc` C output, `tt` typedefs.
 - `td` defines from a C snippet or a `pf` format; `to FILE` loads a C header;
   `tp TYPE @ ADDR` casts; `tx` lists type xrefs.
-- Function variables carry types too — `afvt VAR TYPE @ FUNC` — and `afvl`
+- Function variables carry types too, `afvt VAR TYPE @ FUNC`, and `afvl`
   shows what rizin inferred from the code.
 
 ## Search
@@ -262,8 +262,8 @@ pf "d4 value"
 | Crypto material | `/cmj all`, `/ce 7 8 256` | Both `[]` on coreutils ELFs; available, but do not expect hits on ordinary code |
 | File contents | `/Fj /tmp/probe.bin` | Hits where that file's bytes appear: `8192`, `8541`, … `flag":"hit.keyword_file.N"` |
 | Known magic | `/mj` | `[{"address":0,"size":0,"flag":"hit.magic.0","detail":"ELF 64-bit LSB shared object, x86-64, version 1"}]` |
-| Syscalls | `/as` | On x86-64: `0x00000738 read` — **text output**; `/asj` prints the same, no JSON |
-| Deltified sequence | `/dj 101112` | `[]` here — the delta never occurs |
+| Syscalls | `/as` | On x86-64: `0x00000738 read`, **text output**; `/asj` prints the same, no JSON |
+| Deltified sequence | `/dj 101112` | `[]` here, the delta never occurs |
 
 Pitfalls:
 
@@ -272,11 +272,11 @@ Pitfalls:
 - Default search ranges cover the maps; on a mapped PS-X EXE hits come back as
   vaddrs, while `paddr` is the file offset.
 - `WARNING: |GNU| < search.str.min_length so some search hits may be hidden.
-  Set search.str.min_length to 3 to see them.` — short patterns are skipped
+  Set search.str.min_length to 3 to see them.`, short patterns are skipped
   silently otherwise.
 - Scope searches (`e search.from=...; e search.to=...`) before concluding "not
   found"; the default range follows the current block or map.
-- `/x` and `/aj` hits carry only `address`/`size` (plus a flag name) — the
+- `/x` and `/aj` hits carry only `address`/`size` (plus a flag name), the
   matched text is not in the JSON. Use `/ai` for operand-aware hits; it returns
   `len` and `code`.
 - `/x` and `/v` take file-order bytes and values: a wrong-endian pattern
@@ -330,18 +330,18 @@ $ rizin -q -c 'pf x4 @ 0' /usr/bin/true
 - `pD N` = N **bytes** (signed tolerated), `pd N` = N instructions, `pi` drops
   the address column, `pdr` recurses, `pdb` one basic block.
 - `pdJ N` returns `{"offset","text"}` rows whose text keeps **ANSI colour
-  escapes** — run `e scr.color=false` first if you will parse or log them.
+  escapes**, run `e scr.color=false` first if you will parse or log them.
   There is no `pdsj`; `pds N @ main` printed only the function label in the
   verified run, so treat it as a terse cross-cutting summary, not a report.
 - `pd` follows flags: at `str.help` it prints `.string "--help" ; len=7`
   instead of decoding data as instructions, so read the flag, not the guess.
 - `pxj` is a byte array, `pxwj`/`pxqj` are 32/64-bit value arrays honouring
-  endianness — the right form for diffing raw data.
+  endianness, the right form for diffing raw data.
 - `pf` takes a format string (`x4`, `d2`, `z`), `pfj` returns JSON, `pfs` the
   size.
 - `ph <algo>` prints a digest of the block (`ph sha256 @ main` →
   `b3d0527c437ac1b11213a12c65f05a4098f31d0d74983d18dcb8c0d2516b01ab`); `phl`
-  lists algorithms and their providers — `phl~sha256` matched different
+  lists algorithms and their providers, `phl~sha256` matched different
   providers across versions, so grep rather than hardcoding one entry.
 
 ## Decompiler (rz-ghidra)
@@ -384,7 +384,7 @@ with `jq` for structure.
 
 ## Batch and scripting
 
-- One-shot: `rizin -qc 'aa; aflj' FILE` — every command runs, then quit.
+- One-shot: `rizin -qc 'aa; aflj' FILE`: every command runs, then quit.
 - Repeated flags: `-c 'aa' -c 'afl' -c 'pd 4 @ main'`.
 - Script file: `rizin -q -i script.rz FILE` (verified `demo.rz` with
   `e scr.color=false`, `aa`, `aflj~main`); `-I` runs it before the file loads.
@@ -456,7 +456,7 @@ $ rizin -q -c 'Po /tmp/demo.rzdb' -c ij /usr/bin/true | jq -c '{format:.core.for
 - Config keys are namespaced and differ from other RE tools: `e asm.arch`,
   `e asm.bits`, `e analysis.from`, `e analysis.to`, `e analysis.depth`,
   `e search.from`, `e search.to`, `e scr.color`. List them with `el`, `elj`,
-  or filter with `el~analysis.`. Verify a key before depending on it — several
+  or filter with `el~analysis.`. Verify a key before depending on it, several
   plausible names (`anal.from`, `bin.str.min`, `cmd.pdc`) do not exist.
 - `e key=value` sets, `e-` resets all, `et key` shows the type, `e! key`
   inverts a boolean.

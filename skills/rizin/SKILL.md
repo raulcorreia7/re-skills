@@ -84,9 +84,9 @@ promising a decompiler: `pdg?` answers with the command or an error.
   when piped, 0.8.x does not.
 - Never open a binary for write, and never run `aaa` against an image you
   cannot afford to re-analyse. Inspection changes live in the session, a saved
-  project (`Ps`/`Po`), or a script — not in the file.
+  project (`Ps`/`Po`), or a script, not in the file.
 - rzpipe: a rizin that dies at startup (rejected flag, bad plugin path) makes
-  `open()` block forever — no exception, no timeout. Test the flags on the CLI
+  `open()` block forever, no exception, no timeout. Test the flags on the CLI
   first, and prefer in-session `e ...` settings over spawn flags.
 - rzpipe: a `TimeoutError` leaves the pipe wedged. Reset it (`set_timeout(-1)`)
   before `quit()`, or the quit fails with the same timeout; verified both ways.

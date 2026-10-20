@@ -4,7 +4,7 @@ Python driver for a live rizin process. Verified with `rzpipe` 0.6.2 against
 Rizin 0.9.1 (upstream latest) and 0.8.2; pick the binary with
 `rizin_home`/`PATH` and prefer the newest build available. The spawn flags must
 match that binary: when the rizin you spawn rejects a flag it dies at startup
-and `open()` then **blocks forever** — no exception, no timeout (verified:
+and `open()` then **blocks forever**, no exception, no timeout (verified:
 `-E little` on 0.8.2 printed `rizin: illegal option -- E`, then `exit 124`
 under `timeout 10`).
 
@@ -225,7 +225,7 @@ calls over the pipe.
 | `cmdj` returns `None` on error or empty output | `cmdj("definitely_not_a_command")` → `None` after stderr errors | `cmdj(...) or []`, then check keys before reading |
 | `cmdJ` returns namedtuples | `rz.cmdJ("ij").core.format` → `elf64` | Use it for fixed-info reads only; JSON keys with dots become `_` |
 | `set_timeout` raises `TimeoutError` | `set_timeout(0.002)` then `cmd("aaa")` → `Timeout reached on cmd: 'aaa'` | Wrap slow calls; treat timeout as a failed run |
-| After a timeout, `quit()` also times out | same session: `quit` → `Timeout reached on cmd: 'q'` | `rz.set_timeout(-1)`, then `quit()` — verified to succeed |
+| After a timeout, `quit()` also times out | same session: `quit` → `Timeout reached on cmd: 'q'` | `rz.set_timeout(-1)`, then `quit()`, verified to succeed |
 | Bad `rizin_home` | `Exception: \`rizin_home\` passed is invalid, leave it None or put a valid path to rizin folder` | Validate the directory before opening |
 | Colour escapes in text output | `cmd("pdJ 1 @ main")` carries `\u001b[38;2;…` | `cmd("e scr.color=false")` right after open |
 
@@ -257,7 +257,7 @@ table above).
 ## Driving the decompiler
 
 `pdg` needs a plugin-capable (shared) rizin plus rz-ghidra, but rzpipe drives it
-like any other command — verified against rizin 0.9.1 + rz-ghidra 0.9.0:
+like any other command, verified against rizin 0.9.1 + rz-ghidra 0.9.0:
 
 ```python
 rz = rzpipe.open(binary, flags=["-a", "mips", "-b", "32"],
