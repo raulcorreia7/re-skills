@@ -126,7 +126,7 @@ def callers_of_first_call():
 # [{"from": 9411, "to": 12320, "type": "CALL"}]
 ```
 
-`axt` = refs to the address. Without the `aa` before it the list is empty —
+`axt` = refs to the address. Without the `aa` before it the list is empty:
 a failed analysis and a real no-caller answer look identical.
 
 ### 3. Find every use of an immediate in one function

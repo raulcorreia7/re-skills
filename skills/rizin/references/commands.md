@@ -168,7 +168,7 @@ int main(int argc, char **argv, char **envp);
 `ah` adjusts how rizin decodes or names what it cannot infer. Verified effect:
 `ahb 16` (bit width) and `ahi 16` (immediate base) both changed the decode of
 `0x24a9`/`0x24af` from x86-64 to 16-bit forms (`mov dx, word [di]`, `xor ax, ax`)
-— hints are powerful and sticky per address, so set them deliberately and
+hints are powerful and sticky per address, so set them deliberately and
 remove them with `ah-`/`ahi-` when done.
 
 | Need | Command |
